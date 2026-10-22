@@ -7,7 +7,7 @@ Elegant, user-friendly coin sales landing page and inventory system.
 - Quantity tracking on both admin (accounting) and public retail side
 - Admin: set quantity when adding, edit quantity in the table, totals account for quantity
 - Public: shows available quantity, Buy Now / Offer includes quantity selector (capped at available)
-- Buy Now and Make an Offer buttons (sends formatted email alert to HJErnuki@gmail.com)
+- Buy Now and Make an Offer buttons (sends formatted email alert to hjernuki@gmail.com)
 - Payment mentions: PayPal, Apple Pay, Venmo
 - Phone: 480-688-1100
 - **Photo-first Add Coin flow**
