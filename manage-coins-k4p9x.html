@@ -194,7 +194,7 @@
     <div class="modal-content">
       <h2>Capture Coin Photo</h2>
       <p>Take a clear photo of the front of the coin (or upload an existing image).</p>
-      <input type="file" id="frontPhoto" accept="image/*" capture="environment">
+      <label style="display:block;margin:1rem 0;font-weight:600;color:#D4AF37;">Choose or take a photo:</label><input type="file" id="frontPhoto" accept="image/*" style="display:block;margin:0.5rem 0;font-size:1rem;width:100%;">
       <div id="frontPreview"></div>
       <div class="actions">
         <button class="btn" id="useFrontBtn" disabled>Use This Photo</button>
@@ -537,12 +537,12 @@
  
     // Photo flow
     document.getElementById('addFromPhotoBtn').onclick = () => {
+      // Open the modal first so the file input is visible and works on all devices
+      document.getElementById('photoModal').classList.add('active');
       const input = document.getElementById('frontPhoto');
       input.value = '';
       document.getElementById('frontPreview').innerHTML = '';
       document.getElementById('useFrontBtn').disabled = true;
-      // Directly open camera/gallery for better mobile support
-      input.click();
     };
  
     document.getElementById('cancelPhotoBtn').onclick = () => {
