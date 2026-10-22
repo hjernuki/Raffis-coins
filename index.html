@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raffi's Authentic Coins</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #D4AF37;
+      --gold-light: #F5E6A8;
+      --dark: #0F1419;
+      --card: #1A1F26;
+      --text: #E8E6E3;
+      --muted: #9A958F;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #1a1408 0%, #0F1419 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      margin: 0;
+      color: var(--gold);
+      font-size: 2.4rem;
+    }
+    header .tagline { color: var(--gold-light); margin: 0.5rem 0; font-style: italic; }
+    .contact { margin-top: 0.75rem; font-size: 0.95rem; color: var(--muted); }
+    .contact a { color: var(--gold); text-decoration: none; }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    nav button {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    nav button.active, nav button:hover { background: var(--gold); color: #000; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .coin-card {
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #2A3038;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .coin-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+    .coin-img { width: 100%; height: 200px; object-fit: cover; background: #0a0e12; }
+    .coin-body { padding: 1rem; }
+    .coin-body h3 { margin: 0 0 0.4rem; font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.15rem; }
+    .price { font-size: 1.4rem; font-weight: 600; color: var(--gold-light); margin: 0.4rem 0; }
+    .qty { color: var(--muted); font-size: 0.9rem; }
+    .desc { font-size: 0.9rem; color: var(--muted); margin: 0.5rem 0; max-height: 4.5em; overflow: hidden; }
+    .btn {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .btn:hover { background: var(--gold-light); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+    }
+    .btn-outline:hover { background: rgba(212,175,55,0.15); }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 480px;
+      width: 100%;
+      border: 1px solid var(--gold);
+    }
+    .modal h2 { margin-top: 0; font-family: 'Playfair Display', serif; color: var(--gold); }
+    .payments { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; }
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      border-top: 1px solid #2A3038;
+      margin-top: 2rem;
+    }
+    .search-bar {
+      max-width: 480px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      background: #1A1F26;
+      border: 1px solid #3A4048;
+      border-radius: 30px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .search-bar::before {
+      content: "🔍";
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Raffi's Authentic Coins</h1>
+    <p class="tagline">Genuine • Graded • Trusted</p>
+    <div class="contact">
+      📞 <a href="tel:4806881100">480-688-1100</a> &nbsp;|&nbsp;
+      ✉️ <a href="mailto:hjernuki@gmail.com">hjernuki@gmail.com</a>
+    </div>
+    <nav id="categoryNav">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="gold">Gold</button>
+      <button data-cat="silver">Silver</button>
+      <button data-cat="copper">Copper</button>
+      <button data-cat="other">Other</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search coins by title or description...">
+    </div>
+    <div class="grid" id="coinGrid"></div>
+  </div>
+
+  <footer>
+    <p>Payments accepted: PayPal • Apple Pay • Venmo</p>
+    <p>All coins authentic. Contact for offers, bulk, or questions.</p>
+  </footer>
+
+  <!-- Buy / Offer Modal -->
+  <div class="modal" id="actionModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Buy Now</h2>
+      <div id="modalBody"></div>
+      <div class="actions" style="display:flex;gap:0.5rem;margin-top:1rem;">
+        <button class="btn" id="confirmActionBtn">Send Request</button>
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'raffisCoinsInventory';
+    let coins = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let currentCat = 'all';
+    let searchQuery = '';
+    let currentCoin = null;
+    let actionType = 'buy';
+
+    function getPublicCoins() {
+      return coins.filter(c => c.inRetail && (c.quantity || 0) > 0);
+    }
+
+    function renderCoins() {
+      let list = getPublicCoins().filter(c => currentCat === 'all' || c.category === currentCat);
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        list = list.filter(c =>
+          (c.title || '').toLowerCase().includes(q) ||
+          (c.description || '').toLowerCase().includes(q) ||
+          (c.category || '').toLowerCase().includes(q)
+        );
+      }
+      const grid = document.getElementById('coinGrid');
+      if (!list.length) {
+        grid.innerHTML = '<div class="empty">No coins match your search.</div>';
+        return;
+      }
+      grid.innerHTML = list.map(c => `
+        <div class="coin-card">
+          <img class="coin-img" src="${c.frontImage || ''}" alt="${c.title}" onerror="this.style.display='none'">
+          <div class="coin-body">
+            <h3>${c.title || 'Coin'}</h3>
+            <div class="price">$${ (c.retailPrice || 0).toFixed(2) }</div>
+            <div class="qty">Available: ${c.quantity}</div>
+            <div class="desc">${c.description || ''}</div>
+            <button class="btn" onclick="openAction('${c.id}', 'buy')">Buy Now</button>
+            <button class="btn btn-outline" onclick="openAction('${c.id}', 'offer')">Make an Offer</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderCoins();
+    });
+
+    document.getElementById('categoryNav').addEventListener('click', e => {
+      if (e.target.tagName !== 'BUTTON') return;
+      document.querySelectorAll('#categoryNav button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentCat = e.target.dataset.cat;
+      renderCoins();
+    });
+
+    window.openAction = (id, type) => {
+      currentCoin = coins.find(c => c.id === id);
+      if (!currentCoin) return;
+      actionType = type;
+      document.getElementById('modalTitle').textContent = type === 'buy' ? 'Buy Now' : 'Make an Offer';
+      const maxQty = currentCoin.quantity || 1;
+      let body = `
+        <p><strong>${currentCoin.title}</strong></p>
+        <p>Retail Price: $${(currentCoin.retailPrice||0).toFixed(2)} each</p>
+        <label>Quantity (max ${maxQty})</label>
+        <input type="number" id="actionQty" min="1" max="${maxQty}" value="1" style="width:100%;padding:0.5rem;margin:0.4rem 0;background:#0F1419;border:1px solid #3A4048;color:#fff;border-radius:6px;">
+      `;
+      if (type === 'offer') {
+        body += `
+          <label>Your Offer per coin ($)</label>
+          <input type="number" id="offerAmount" step="0.01" min="0" placeholder="0.00" style="width:100%;padding:0.5rem;margin:0.4rem 0;background:#0F1419;border:1px solid #3A4048;color:#fff;border-radius:6px;">
+        `;
+      }
+      body += `
+        <label>Your Name</label>
+        <input type="text" id="buyerName" placeholder="Name" style="width:100%;padding:0.5rem;margin:0.4rem 0;background:#0F1419;border:1px solid #3A4048;color:#fff;border-radius:6px;">
+        <label>Your Email or Phone</label>
+        <input type="text" id="buyerContact" placeholder="Email or phone" style="width:100%;padding:0.5rem;margin:0.4rem 0;background:#0F1419;border:1px solid #3A4048;color:#fff;border-radius:6px;">
+        <label>Message (optional)</label>
+        <textarea id="buyerMsg" rows="3" style="width:100%;padding:0.5rem;margin:0.4rem 0;background:#0F1419;border:1px solid #3A4048;color:#fff;border-radius:6px;"></textarea>
+        <div class="payments">Payments: PayPal • Apple Pay • Venmo</div>
+      `;
+      document.getElementById('modalBody').innerHTML = body;
+      document.getElementById('actionModal').classList.add('active');
+    };
+
+    window.closeModal = () => {
+      document.getElementById('actionModal').classList.remove('active');
+    };
+
+    document.getElementById('confirmActionBtn').onclick = () => {
+      if (!currentCoin) return;
+      const qty = parseInt(document.getElementById('actionQty').value) || 1;
+      const name = document.getElementById('buyerName').value || 'Customer';
+      const contact = document.getElementById('buyerContact').value || '';
+      const msg = document.getElementById('buyerMsg').value || '';
+      let subject, body;
+
+      if (actionType === 'buy') {
+        const total = ((currentCoin.retailPrice || 0) * qty).toFixed(2);
+        subject = `Buy Now Request: ${currentCoin.title} (Qty ${qty})`;
+        body = `Buy Now Request\n\nCoin: ${currentCoin.title}\nQuantity: ${qty}\nPrice each: $${(currentCoin.retailPrice||0).toFixed(2)}\nTotal: $${total}\n\nFrom: ${name}\nContact: ${contact}\n\nMessage: ${msg}\n\n---\nRaffi's Authentic Coins`;
+      } else {
+        const offer = parseFloat(document.getElementById('offerAmount')?.value) || 0;
+        subject = `Offer: ${currentCoin.title} (Qty ${qty})`;
+        body = `Make an Offer\n\nCoin: ${currentCoin.title}\nQuantity: ${qty}\nOffer per coin: $${offer.toFixed(2)}\nTotal Offer: $${(offer * qty).toFixed(2)}\n\nFrom: ${name}\nContact: ${contact}\n\nMessage: ${msg}\n\n---\nRaffi's Authentic Coins`;
+      }
+
+      const mailto = `mailto:hjernuki@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+      closeModal();
+    };
+
+    // Listen for storage changes (if admin open in other tab)
+    window.addEventListener('storage', () => {
+      coins = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      renderCoins();
+    });
+
+    renderCoins();
+  </script>
+</body>
+</html>
