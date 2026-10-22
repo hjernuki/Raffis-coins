@@ -1,0 +1,24 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local backups & exports
+*.json
+!package.json
+raffis-coins-backup*.json
+inventory-backup*.json
+
+# Logs
+*.log
+
+# Optional: if you later add any local test files
+*.tmp
+*.temp
