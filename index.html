@@ -1,4 +1,4 @@
-<!DOCTYPE html>   
+<!DOCTYPE html>  
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -218,6 +218,16 @@
       return result;
     }
  
+    
+    function toDirectImageUrl(url) {
+      if (!url) return '';
+      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match) {
+        return 'https://drive.google.com/uc?export=view&id=' + match[1];
+      }
+      return url;
+    }
+ 
     function mapSheetToCoins(rows) {
       return rows.map((row, index) => {
         const title = row['TITLE'] || row['Title'] || '';
@@ -233,7 +243,7 @@
           quantity: quantity,
           retailPrice: retailPrice,
           description: description,
-          frontImage: frontImage,
+          frontImage: toDirectImageUrl(frontImage),
           inRetail: quantity > 0
         };
       }).filter(c => c.title && c.title.trim() !== '');
