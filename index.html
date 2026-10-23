@@ -223,7 +223,7 @@
       if (!url) return '';
       const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
       if (match) {
-        return 'https://drive.google.com/uc?export=view&id=' + match[1];
+        return 'https://drive.usercontent.google.com/download?id=' + match[1] + '&export=view';
       }
       return url;
     }
