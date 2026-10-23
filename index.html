@@ -148,6 +148,7 @@
       transform: translateY(-50%);
       font-size: 1rem;
     }
+    .empty { text-align: center; color: var(--muted); padding: 2rem; }
   </style>
 </head>
 <body>
@@ -172,7 +173,7 @@
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Search coins by title or description...">
     </div>
-    <div class="grid" id="coinGrid"></div>
+    <div class="grid" id="coinGrid"><div class="empty">Loading coins...</div></div>
   </div>
  
   <footer>
@@ -193,12 +194,55 @@
   </div>
  
   <script>
-    const STORAGE_KEY = 'raffisCoinsInventory';
-    let coins = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTE-2bm_nP9zssLQZkaHfWuhxbSY2aMBelYXXHpGXIq8h4EKfvozxD12vDRIMH4XJdrLClxuu7kUUvm/pub?output=csv';
+    let coins = [];
     let currentCat = 'all';
     let searchQuery = '';
     let currentCoin = null;
     let actionType = 'buy';
+ 
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      const result = [];
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+        const row = {};
+        headers.forEach((h, idx) => {
+          row[h] = values[idx] || '';
+        });
+        result.push(row);
+      }
+      return result;
+    }
+ 
+    function mapSheetToCoins(rows) {
+      return rows.map((row, index) => ({
+        id: 'coin-' + index,
+        title: row['Title'] || 'Untitled Coin',
+        category: (row['Category'] || 'other').toLowerCase(),
+        quantity: parseInt(row['Quantity']) || 0,
+        retailPrice: parseFloat(row['Retail Price']) || 0,
+        description: row['Description'] || '',
+        frontImage: row['Front Photo'] || '',
+        inRetail: (parseInt(row['Quantity']) || 0) > 0
+      })).filter(c => c.title && c.title !== 'Untitled Coin');
+    }
+ 
+    async function loadCoins() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+        coins = mapSheetToCoins(rows);
+        renderCoins();
+      } catch (err) {
+        document.getElementById('coinGrid').innerHTML = '<div class="empty">Could not load coins. Please check the Google Sheet link.</div>';
+        console.error(err);
+      }
+    }
  
     function getPublicCoins() {
       return coins.filter(c => c.inRetail && (c.quantity || 0) > 0);
@@ -216,7 +260,7 @@
       }
       const grid = document.getElementById('coinGrid');
       if (!list.length) {
-        grid.innerHTML = '<div class="empty">No coins match your search.</div>';
+        grid.innerHTML = '<div class="empty">No coins available right now.</div>';
         return;
       }
       grid.innerHTML = list.map(c => `
@@ -224,7 +268,7 @@
           <img class="coin-img" src="${c.frontImage || ''}" alt="${c.title}" onerror="this.style.display='none'">
           <div class="coin-body">
             <h3>${c.title || 'Coin'}</h3>
-            <div class="price">$${ (c.retailPrice || 0).toFixed(2) }</div>
+            <div class="price">$${(c.retailPrice || 0).toFixed(2)}</div>
             <div class="qty">Available: ${c.quantity}</div>
             <div class="desc">${c.description || ''}</div>
             <button class="btn" onclick="openAction('${c.id}', 'buy')">Buy Now</button>
@@ -305,13 +349,7 @@
       closeModal();
     };
  
-    // Listen for storage changes (if admin open in other tab)
-    window.addEventListener('storage', () => {
-      coins = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      renderCoins();
-    });
- 
-    renderCoins();
+    loadCoins();
   </script>
 </body>
 </html>
